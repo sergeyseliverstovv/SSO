@@ -27,7 +27,7 @@ func MustLoad() *Config {
 		panic("config patch is empty")
 	}
 
-	if _, err := os.Stat(path); os.IsNotExist(err) {
+	if _, err := os.Stat(path); os.IsNotExist(err) { // IsNotExist возвращает true тюк файл не найден
 
 		panic("config file does not exist: " + path)
 	}
@@ -45,12 +45,12 @@ func fetchConfigPatch() string {
 
 	var res string
 
-	flag.StringVar(&res, "config", "", "patch to config file")
+	flag.StringVar(&res, "config", "", "patch to config file") // не понятно какой файл передать в config
 	flag.Parse()
 
 	if res == "" {
 
-		res = os.Getenv("CONFIG_PATCH")
+		res = os.Getenv("CONFIG_PATH") // или задать в пременную окружения
 
 	}
 
