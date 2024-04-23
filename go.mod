@@ -4,6 +4,7 @@ go 1.21.1
 
 require github.com/fatih/color v1.16.0
 
+require github.com/sergeyseliverstovv/protos v0.0.0-20240417101331-10c3c1db8f34 // indirect
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect

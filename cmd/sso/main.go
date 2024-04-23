@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 
+	"example.com/sso/internal/app"
 	"example.com/sso/internal/config"
 	slogpretty "example.com/sso/internal/lib/logger/handlers/slogprrety"
 )
@@ -30,9 +31,9 @@ func main() {
 
 	log.Warn("warn messange")
 
-	// TODO: инициализировать логгер
+	application := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTl)
 
-	// TODO: инициализация приложения(app)
+	application.GRPCSrv.MustRun()
 
 	// TODO: запустить gRPC сервер приложения
 
