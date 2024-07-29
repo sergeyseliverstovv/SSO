@@ -8,6 +8,8 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
+//Структура соответствующая файлу конфигурации local.yaml
+
 type Config struct {
 	Env         string        `yaml:"env" env-default:"local"`
 	StoragePath string        `yaml:"storage_path" env-required:"true"`
@@ -20,6 +22,7 @@ type GRPCConfig struct {
 	Timeout time.Duration `yaml:"timeout"`
 }
 
+// Функция MustLoad возвращает объект конфига
 func MustLoad() *Config {
 	path := fetchConfigPatch()
 
@@ -27,7 +30,7 @@ func MustLoad() *Config {
 		panic("config patch is empty")
 	}
 
-	if _, err := os.Stat(path); os.IsNotExist(err) { // IsNotExist возвращает true тюк файл не найден
+	if _, err := os.Stat(path); os.IsNotExist(err) { // IsNotExist возвращает true т.к файл не найден
 
 		panic("config file does not exist: " + path)
 	}
@@ -41,6 +44,7 @@ func MustLoad() *Config {
 	return &cfg
 }
 
+// Функция читает и возвращает путь конфигурационнога файла либо из флага, либо из переменной окружения
 func fetchConfigPatch() string {
 
 	var res string

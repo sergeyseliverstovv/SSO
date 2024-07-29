@@ -3,10 +3,12 @@ package main
 import (
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 
-	"example.com/sso/internal/app"
-	"example.com/sso/internal/config"
-	slogpretty "example.com/sso/internal/lib/logger/handlers/slogprrety"
+	"sso/internal/app"
+	"sso/internal/config"
+	slogpretty "sso/internal/lib/logger/handlers/slogprrety"
 )
 
 const (
@@ -33,12 +35,24 @@ func main() {
 
 	application := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTl)
 
-	application.GRPCSrv.MustRun()
+	go application.GRPCSrv.MustRun() // Запускаем gRPC сервер в отдельной go - рутине
 
 	// TODO: запустить gRPC сервер приложения
 
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT) // Слушаем сигналы из os SIGTERM и SIGINT
+
+	sign := <-stop // Ожидаем когда что то придет в канал
+
+	log.Info("stopping application", slog.String("signal", sign.String()))
+
+	application.GRPCSrv.Stop() // Останавливаем приложение
+
+	log.Info("application stopped")
+
 }
 
+// Определяет в каком типе будут выводится логи в зависимости от того в каком окружение запущен сервис
 func setupLogger(env string) *slog.Logger {
 
 	var log *slog.Logger

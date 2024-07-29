@@ -8,7 +8,8 @@ import (
 
 	//"strconv"
 
-	authgrpc "example.com/sso/internal/grpc/auth"
+	authgrpc "sso/internal/grpc/auth"
+
 	"google.golang.org/grpc"
 )
 
@@ -18,10 +19,12 @@ type App struct {
 	port       int
 }
 
-func New(log *slog.Logger, port int) *App {
+func New(log *slog.Logger, authService authgrpc.Auth, port int) *App {
 	gRPCServer := grpc.NewServer()
 
-	authgrpc.Register(gRPCServer)
+	//auth := authgrpc.App
+
+	authgrpc.Register(gRPCServer, authService)
 
 	return &App{
 		log:        log,
@@ -31,6 +34,7 @@ func New(log *slog.Logger, port int) *App {
 
 }
 
+// Функция MustRun является оберткой для функции Run. Если не запустился сервис т.е Run вернула ошибку мы бросаем панику.
 func (a *App) MustRun() {
 	if err := a.Run(); err != nil {
 		panic("err")
@@ -39,7 +43,7 @@ func (a *App) MustRun() {
 }
 
 func (a *App) Run() error {
-	const op = "grpcappRun"
+	const op = "grpcapp.Run"
 
 	log := a.log.With(slog.String("op", op), slog.Int("port", a.port))
 

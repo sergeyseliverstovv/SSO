@@ -4,20 +4,21 @@ import (
 	"log/slog"
 	"time"
 
-	grpcapp "example.com/sso/internal/app/grpc"
+	grpcapp "sso/internal/app/grpc"
+	//"example.com/sso/internal/grpc/auth"
 )
 
 type App struct {
 	GRPCSrv *grpcapp.App
 }
 
-func New(log *slog.Logger, grpcPort int, storagePatn string, tokenTTL time.Duration) *App {
+func New(log *slog.Logger, grpcPort int, storagePath string, tokenTTL time.Duration) *App {
 
 	//TODO: инициализировать хранилище storage
 
 	//TODO: инициализировать auth service
 
-	grpcApp := grpcapp.New(log, grpcPort)
+	grpcApp := grpcapp.New(log, authService, grpcPort)
 
 	return &App{
 		GRPCSrv: grpcApp,
