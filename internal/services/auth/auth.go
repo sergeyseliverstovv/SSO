@@ -2,9 +2,13 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"sso/internal/domain/models"
+	"sso/internal/lib/logger/sl"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Auth struct {
@@ -48,8 +52,35 @@ func (a *Auth) Login(ctx context.Context, email string, password string, appID i
 	panic("not implemented")
 }
 
-func (a *Auth) RegisterNewUser(ctx context.Context, email string, password string) (int32, error) {
-	panic("not implemented")
+func (a *Auth) RegisterNewUser(ctx context.Context, email string, password string) (int64, error) {
+	const op = "auth.RegisterNewUser"
+
+	log := a.log.With(
+		slog.String("op", op),
+		slog.String("email", email),
+	)
+
+	log.Info("registering user")
+
+	passHach, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	if err != nil {
+		log.Error("failed to generate password hash", sl.Err(err))
+
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	id, err := a.userSaver.SaveUser(ctx, email, passHach)
+	if err != nil {
+		log.Error("failed to save user", sl.Err(err))
+
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	log.Info("user registered")
+
+	return id, nil
+
 }
 
 func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
