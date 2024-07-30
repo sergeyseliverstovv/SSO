@@ -7,7 +7,7 @@ require (
 	google.golang.org/grpc v1.65.0
 )
 
-require golang.org/x/crypto v0.25.0 // indirect
+require golang.org/x/crypto v0.25.0
 
 require (
 	github.com/sergeyseliverstovv/protos v0.0.0-20240417105102-61a15283cabb
